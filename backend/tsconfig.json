@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "allowJs": true,
         "module": "CommonJS",
         "esModuleInterop": true,
         "resolveJsonModule": true,

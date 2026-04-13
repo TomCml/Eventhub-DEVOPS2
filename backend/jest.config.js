@@ -5,6 +5,19 @@ module.exports = {
     roots: ['<rootDir>/tests'],
     testMatch: ['**/*.test.ts'],
     transform: {
-        '^.+\\.tsx?$': 'ts-jest',
+        '^.+\\.(ts|tsx|js|jsx)$': [
+            'ts-jest',
+            {
+                tsconfig: {
+                    allowJs: true,
+                    esModuleInterop: true,
+                    target: 'ES2021',
+                },
+            },
+        ],
     },
+    transformIgnorePatterns: [
+        'node_modules[\\\\/](?!(otplib|@otplib|@scure)[\\\\/])',
+    ],
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };
