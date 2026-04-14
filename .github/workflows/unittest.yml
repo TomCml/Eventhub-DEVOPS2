@@ -27,7 +27,7 @@ jobs:
 
       - name: Run backend unit tests
         working-directory: ./backend
-        run: npm run test:unit
+        run: npm test
 
   frontend-tests:
     runs-on: ubuntu-latest
