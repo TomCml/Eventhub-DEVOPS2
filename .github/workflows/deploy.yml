@@ -1,0 +1,54 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  unit-tests:
+    uses: ./.github/workflows/unittest.yml
+    secrets: inherit
+
+  e2e-tests:
+    needs: unit-tests
+    uses: ./.github/workflows/e2etest.yml
+    secrets: inherit
+
+  deploy:
+    needs: e2e-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/${{ secrets.VPS_USER }}
+
+            if [ ! -d "eventhub" ]; then
+              git clone git@github.com:TomCml/Eventhub-DEVOPS2.git eventhub
+            fi
+
+            cd eventhub
+            git pull origin main
+
+            cat <<EOF > backend/.env
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            POSTGRES_USER=${{ secrets.DB_USER }}
+            POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
+            POSTGRES_DB=${{ secrets.DB_NAME }}
+            DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@postgres:5432/${{ secrets.DB_NAME }}
+            EOF
+
+            docker compose down
+            docker compose build
+            docker compose run --rm migrate
+            docker compose up -d

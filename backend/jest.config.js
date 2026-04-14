@@ -17,7 +17,7 @@ module.exports = {
         ],
     },
     transformIgnorePatterns: [
-        'node_modules[\\\\/](?!(otplib|@otplib|@scure)[\\\\/])',
+        'node_modules[\\\\/](?!(otplib|@otplib|@scure|@noble)[\\\\/])',
     ],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };

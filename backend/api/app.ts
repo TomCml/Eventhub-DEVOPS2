@@ -44,7 +44,11 @@ app.use(errorHandlerMiddleware);
 
 const PORT = getEnvVariable('PORT') || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Swagger docs available at http://localhost:${PORT}/api/doc`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+        console.log(`Swagger docs available at http://localhost:${PORT}/api/doc`);
+    });
+}
+
+export default app;

@@ -10,8 +10,8 @@ export const AuthMiddleware = async (req: Request, res: Response, next: NextFunc
             return next();
         }
 
-        return res.status(401).jsonError('Not Authorized');
+        return res.status(401).jsonError('Not Authorized', 401);
     } catch (error) {
-        return res.status(401).jsonError('Not Authorized');
+        return res.status(401).jsonError('Not Authorized', 401);
     }
 }
