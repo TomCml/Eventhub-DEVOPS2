@@ -10,6 +10,7 @@ jobs:
       NODE_ENV: test
       JWT_SECRET: test-secret
       DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+      PORT: 3000
 
     services:
       postgres:
