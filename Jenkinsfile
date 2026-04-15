@@ -38,9 +38,7 @@ PORT=3000
 JWT_SECRET=${JWT_SECRET}
 EOF
 
-                            cat > frontend/.env <<EOF
-VITE_API_BASE=https://eventhub.tom-cml.com/api
-EOF
+                            echo "frontend env set via build args"
                         '''
                     }
                 }
@@ -50,9 +48,11 @@ EOF
         stage('Deploy') {
             steps {
                 dir("${DEPLOY_DIR}") {
-                    sh 'docker compose down'
-                    sh 'docker compose build'
-                    sh 'docker compose up -d'
+                    sh 'VITE_API_BASE=https://eventhub.tom-cml.com/api docker compose -f docker-compose.yml down'
+                    sh 'VITE_API_BASE=https://eventhub.tom-cml.com/api docker compose -f docker-compose.yml build'
+                    sh 'VITE_API_BASE=https://eventhub.tom-cml.com/api docker compose -f docker-compose.yml up -d'
+                    sh 'sleep 10'
+                    sh 'docker exec eventhub_backend sh -c "npx ts-node infrastructure/database/seed.ts"'
                 }
             }
         }
