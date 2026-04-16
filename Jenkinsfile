@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DEPLOY_DIR = '/home/ubuntu/web-apps/eventhub'
+        SCANNER_HOME = tool 'SonarScanner'
     }
 
     stages {
@@ -16,6 +17,21 @@ pipeline {
                         git pull origin main
                     fi
                 '''
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir("${DEPLOY_DIR}") {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            ${SCANNER_HOME}/bin/sonar-scanner \
+                                -Dsonar.projectKey=eventhub \
+                                -Dsonar.sources=backend/api,backend/infrastructure,backend/utility,frontend/src \
+                                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.ts
+                        '''
+                    }
+                }
             }
         }
 
